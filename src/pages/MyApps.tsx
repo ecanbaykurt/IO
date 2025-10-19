@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
@@ -11,7 +11,10 @@ import {
   TrendingUp,
   Clock,
   Tag,
-  MoreVertical
+  MoreVertical,
+  Sparkles,
+  Brain,
+  Github
 } from 'lucide-react';
 
 interface App {
@@ -23,46 +26,28 @@ interface App {
   thumbnail: string;
   runCount: number;
   tags: string[];
+  isGenerated?: boolean;
+  sector?: string;
+  painPoint?: any;
+  githubRepo?: any;
+  huggingFaceModel?: any;
 }
 
 const MyApps: React.FC = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState<'recent' | 'name' | 'runs'>('recent');
+  const [apps, setApps] = useState<App[]>([]);
 
-  // Mock data - in real app this would come from API
-  const [apps] = useState<App[]>([
-    {
-      id: '1',
-      name: 'Weather Dashboard',
-      description: 'Real-time weather with 5-day forecast',
-      lastUpdated: '2 hours ago',
-      techStack: ['React', 'Tailwind', 'OpenWeather API'],
-      thumbnail: '🌤️',
-      runCount: 24,
-      tags: ['Weather', 'Dashboard']
-    },
-    {
-      id: '2',
-      name: 'Habit Tracker',
-      description: 'Track daily habits with streak counters',
-      lastUpdated: '1 day ago',
-      techStack: ['React', 'Tailwind', 'Local Storage'],
-      thumbnail: '📊',
-      runCount: 18,
-      tags: ['Productivity', 'Habits']
-    },
-    {
-      id: '3',
-      name: 'AI Chat Assistant',
-      description: 'GPT-powered chat with conversation history',
-      lastUpdated: '3 days ago',
-      techStack: ['React', 'Tailwind', 'OpenAI API'],
-      thumbnail: '🤖',
-      runCount: 45,
-      tags: ['AI', 'Chat']
-    }
-  ]);
+  useEffect(() => {
+    // Load apps from localStorage (both manual and generated)
+    const savedApps = JSON.parse(localStorage.getItem('savedApps') || '[]');
+    const prototypes = JSON.parse(localStorage.getItem('appPrototypes') || '[]');
+    
+    // Combine both sources
+    const allApps = [...savedApps, ...prototypes];
+    setApps(allApps);
+  }, []);
 
   const filteredApps = apps.filter(app =>
     app.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -82,8 +67,14 @@ const MyApps: React.FC = () => {
     }
   });
 
-  const handleOpenApp = (appId: string) => {
-    navigate(`/runner/${appId}`);
+  const handleOpenApp = (app: App) => {
+    if (app.isGenerated) {
+      // Navigate to prototype page for generated apps
+      navigate(`/prototype/${app.id}`);
+    } else {
+      // Navigate to runner for manual apps
+      navigate(`/runner/${app.id}`);
+    }
   };
 
   const handleEditApp = (appId: string) => {
@@ -172,8 +163,13 @@ const MyApps: React.FC = () => {
                 className="card hover:scale-105 transform transition-all duration-200"
               >
                 {/* App Thumbnail */}
-                <div className="w-full h-32 bg-gradient-to-br from-primary-500/20 to-primary-600/20 rounded-lg flex items-center justify-center mb-4">
+                <div className="w-full h-32 bg-gradient-to-br from-primary-500/20 to-primary-600/20 rounded-lg flex items-center justify-center mb-4 relative">
                   <span className="text-4xl">{app.thumbnail}</span>
+                  {app.isGenerated && (
+                    <div className="absolute top-2 right-2 bg-purple-500/20 backdrop-blur-md border border-purple-500/30 rounded-full p-1">
+                      <Sparkles className="w-4 h-4 text-purple-300" />
+                    </div>
+                  )}
                 </div>
 
                 {/* App Info */}
@@ -192,6 +188,28 @@ const MyApps: React.FC = () => {
                       </span>
                     ))}
                   </div>
+
+                  {/* Generated App Indicators */}
+                  {app.isGenerated && (
+                    <div className="flex flex-wrap gap-2 mb-3">
+                      {app.githubRepo && (
+                        <div className="flex items-center gap-1 bg-green-500/20 text-green-300 text-xs px-2 py-1 rounded">
+                          <Github className="w-3 h-3" />
+                          <span>GitHub</span>
+                        </div>
+                      )}
+                      {app.huggingFaceModel && (
+                        <div className="flex items-center gap-1 bg-blue-500/20 text-blue-300 text-xs px-2 py-1 rounded">
+                          <Brain className="w-3 h-3" />
+                          <span>AI Model</span>
+                        </div>
+                      )}
+                      <div className="flex items-center gap-1 bg-purple-500/20 text-purple-300 text-xs px-2 py-1 rounded">
+                        <Sparkles className="w-3 h-3" />
+                        <span>Generated</span>
+                      </div>
+                    </div>
+                  )}
 
                   {/* Tags */}
                   <div className="flex flex-wrap gap-1 mb-3">
@@ -222,11 +240,11 @@ const MyApps: React.FC = () => {
                 {/* Actions */}
                 <div className="flex space-x-2">
                   <button
-                    onClick={() => handleOpenApp(app.id)}
+                    onClick={() => handleOpenApp(app)}
                     className="flex-1 btn-primary flex items-center justify-center space-x-2 py-2"
                   >
                     <Play className="w-4 h-4" />
-                    <span>Open</span>
+                    <span>{app.isGenerated ? 'Run Prototype' : 'Open'}</span>
                   </button>
                   
                   <button

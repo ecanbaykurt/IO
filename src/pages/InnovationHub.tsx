@@ -15,6 +15,7 @@ import {
   RefreshCw
 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import InspireMeModal from '../components/InspireMeModal';
 
 interface PublicApp {
   id: string;
@@ -39,11 +40,12 @@ const InnovationHub: React.FC = () => {
 
   const categories = [
     { id: 'all', label: 'All', icon: '🌟' },
-    { id: 'productivity', label: 'Productivity', icon: '📊' },
-    { id: 'weather', label: 'Weather', icon: '🌤️' },
     { id: 'finance', label: 'Finance', icon: '💰' },
-    { id: 'ai', label: 'AI', icon: '🤖' },
-    { id: 'social', label: 'Social', icon: '👥' }
+    { id: 'supply chain', label: 'Supply Chain', icon: '🚚' },
+    { id: 'healthcare', label: 'Healthcare', icon: '🏥' },
+    { id: 'technology', label: 'Technology', icon: '💻' },
+    { id: 'productivity', label: 'Productivity', icon: '📊' },
+    { id: 'ai', label: 'AI', icon: '🤖' }
   ];
 
   const [publicApps] = useState<PublicApp[]>([
@@ -153,9 +155,7 @@ const InnovationHub: React.FC = () => {
   };
 
   const handleInspireMe = () => {
-    const randomIdea = inspireMeIdeas[Math.floor(Math.random() * inspireMeIdeas.length)];
-    setSearchTerm(randomIdea);
-    toast.success(`Inspired: ${randomIdea}`);
+    setShowInspireMe(true);
   };
 
   return (
@@ -388,6 +388,13 @@ const InnovationHub: React.FC = () => {
           </div>
         </motion.div>
       </div>
+
+      {/* Inspire Me Modal */}
+      <InspireMeModal
+        isOpen={showInspireMe}
+        onClose={() => setShowInspireMe(false)}
+        selectedSector={selectedCategory}
+      />
     </div>
   );
 };

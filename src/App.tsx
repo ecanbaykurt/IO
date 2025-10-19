@@ -7,6 +7,7 @@ import MyApps from './pages/MyApps';
 import AppRunner from './pages/AppRunner';
 import Profile from './pages/Profile';
 import InnovationHub from './pages/InnovationHub';
+import AppPrototype from './pages/AppPrototype';
 import Navigation from './components/Navigation';
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
           <Route path="/runner/:appId" element={<AppRunner />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/explore" element={<InnovationHub />} />
+          <Route path="/prototype/:id" element={<AppPrototype />} />
         </Routes>
         <Toaster 
           position="top-right"
