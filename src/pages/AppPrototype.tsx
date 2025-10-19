@@ -16,6 +16,10 @@ import {
   Settings
 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import FinanceTemplate from '../templates/FinanceTemplate';
+import HealthcareTemplate from '../templates/HealthcareTemplate';
+import SupplyChainTemplate from '../templates/SupplyChainTemplate';
+import TechnologyTemplate from '../templates/TechnologyTemplate';
 
 interface AppPrototype {
   id: string;
@@ -215,181 +219,34 @@ const AppPrototype: React.FC = () => {
           transition={{ delay: 0.2 }}
           className="max-w-6xl mx-auto"
         >
-          <div className="grid lg:grid-cols-2 gap-8">
-            {/* Input Section */}
-            <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8">
-              <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-                <Upload className="w-6 h-6" />
-                Input Data
-              </h2>
-              
-              {/* Sector-specific input */}
-              {app.sector === 'finance' && (
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-white/80 text-sm mb-2">Expense Description</label>
-                    <textarea
-                      value={inputData}
-                      onChange={(e) => setInputData(e.target.value)}
-                      placeholder="Enter expense details (e.g., 'Coffee at Starbucks - $4.50')"
-                      className="w-full bg-white/5 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                      rows={4}
-                    />
-                  </div>
-                </div>
-              )}
-
-              {app.sector === 'healthcare' && (
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-white/80 text-sm mb-2">Patient Information</label>
-                    <textarea
-                      value={inputData}
-                      onChange={(e) => setInputData(e.target.value)}
-                      placeholder="Enter patient details or symptoms"
-                      className="w-full bg-white/5 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                      rows={4}
-                    />
-                  </div>
-                </div>
-              )}
-
-              {app.sector === 'supply chain' && (
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-white/80 text-sm mb-2">Inventory Data</label>
-                    <textarea
-                      value={inputData}
-                      onChange={(e) => setInputData(e.target.value)}
-                      placeholder="Enter inventory items and quantities"
-                      className="w-full bg-white/5 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                      rows={4}
-                    />
-                  </div>
-                </div>
-              )}
-
-              {app.sector === 'technology' && (
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-white/80 text-sm mb-2">Project Details</label>
-                    <textarea
-                      value={inputData}
-                      onChange={(e) => setInputData(e.target.value)}
-                      placeholder="Enter project requirements or code snippets"
-                      className="w-full bg-white/5 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                      rows={4}
-                    />
-                  </div>
-                </div>
-              )}
-
-              {/* Run Button */}
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={handleRunPrototype}
-                disabled={isProcessing || !inputData.trim()}
-                className={`w-full bg-gradient-to-r ${getSectorColor(app.sector)} text-white font-bold py-4 px-8 rounded-xl hover:opacity-90 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 mt-6`}
-              >
-                {isProcessing ? (
-                  <>
-                    <RefreshCw className="w-5 h-5 animate-spin" />
-                    Processing...
-                  </>
-                ) : (
-                  <>
-                    <Play className="w-5 h-5" />
-                    Run Analysis
-                  </>
-                )}
-              </motion.button>
-            </div>
-
-            {/* Results Section */}
-            <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8">
-              <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-                <BarChart3 className="w-6 h-6" />
-                Results
-              </h2>
-
-              {results.status === 'idle' && (
-                <div className="text-center py-12">
-                  <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Settings className="w-8 h-8 text-white/60" />
-                  </div>
-                  <p className="text-white/80 text-lg">Enter data and click "Run Analysis" to see results</p>
-                </div>
-              )}
-
-              {results.status === 'processing' && (
-                <div className="text-center py-12">
-                  <RefreshCw className="w-12 h-12 text-white/60 animate-spin mx-auto mb-4" />
-                  <p className="text-white/80 text-lg">Processing your data...</p>
-                  <p className="text-white/60 text-sm mt-2">This may take a moment</p>
-                </div>
-              )}
-
-              {results.status === 'success' && results.data && (
-                <div className="space-y-6">
-                  {/* AI Insights */}
-                  <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4">
-                    <div className="flex items-center gap-2 mb-3">
-                      <CheckCircle className="w-5 h-5 text-green-400" />
-                      <h3 className="text-green-300 font-semibold">AI Analysis Complete</h3>
-                    </div>
-                    <p className="text-white/80 text-sm">{results.data.summary}</p>
-                  </div>
-
-                  {/* Insights */}
-                  {results.insights && results.insights.length > 0 && (
-                    <div>
-                      <h4 className="text-white font-semibold mb-3">Key Insights</h4>
-                      <ul className="space-y-2">
-                        {results.insights.map((insight, index) => (
-                          <li key={index} className="flex items-start gap-2 text-white/80 text-sm">
-                            <div className="w-2 h-2 bg-purple-400 rounded-full mt-2 flex-shrink-0"></div>
-                            <span>{insight}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-
-                  {/* Recommendations */}
-                  {results.recommendations && results.recommendations.length > 0 && (
-                    <div>
-                      <h4 className="text-white font-semibold mb-3">Recommendations</h4>
-                      <ul className="space-y-2">
-                        {results.recommendations.map((rec, index) => (
-                          <li key={index} className="flex items-start gap-2 text-white/80 text-sm">
-                            <div className="w-2 h-2 bg-blue-400 rounded-full mt-2 flex-shrink-0"></div>
-                            <span>{rec}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-
-                  {/* Data Visualization */}
-                  <div className="bg-white/5 border border-white/10 rounded-lg p-4">
-                    <h4 className="text-white font-semibold mb-3">Data Summary</h4>
-                    <pre className="text-green-400 text-xs overflow-x-auto">
-                      {JSON.stringify(results.data, null, 2)}
-                    </pre>
-                  </div>
-                </div>
-              )}
-
-              {results.status === 'error' && (
-                <div className="text-center py-12">
-                  <AlertCircle className="w-12 h-12 text-red-400 mx-auto mb-4" />
-                  <p className="text-white/80 text-lg">Failed to process data</p>
-                  <p className="text-white/60 text-sm mt-2">Please try again</p>
-                </div>
-              )}
-            </div>
-          </div>
+          {/* Dynamic Template Rendering */}
+          {app.sector === 'finance' && (
+            <FinanceTemplate 
+              onDataProcessed={(data) => setResults({ status: 'success', data, insights: data.insights, recommendations: data.recommendations })}
+              isLoading={isProcessing}
+            />
+          )}
+          
+          {app.sector === 'healthcare' && (
+            <HealthcareTemplate 
+              onDataProcessed={(data) => setResults({ status: 'success', data, insights: data.insights, recommendations: data.recommendations })}
+              isLoading={isProcessing}
+            />
+          )}
+          
+          {app.sector === 'supply chain' && (
+            <SupplyChainTemplate 
+              onDataProcessed={(data) => setResults({ status: 'success', data, insights: data.insights, recommendations: data.recommendations })}
+              isLoading={isProcessing}
+            />
+          )}
+          
+          {app.sector === 'technology' && (
+            <TechnologyTemplate 
+              onDataProcessed={(data) => setResults({ status: 'success', data, insights: data.insights, recommendations: data.recommendations })}
+              isLoading={isProcessing}
+            />
+          )}
 
           {/* Action Buttons */}
           <div className="flex flex-wrap gap-4 justify-center mt-8">
