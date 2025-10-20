@@ -315,7 +315,6 @@ export class ComponentGenerator {
       'finance': {
         type: 'chart',
         visualization: 'pie_chart',
-        dataFields: ['amount', 'category', 'date', 'insights'],
         dataFields: ['amount', 'category', 'date', 'insights']
       },
       'healthcare': {
